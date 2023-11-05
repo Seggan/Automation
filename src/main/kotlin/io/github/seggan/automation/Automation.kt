@@ -1,5 +1,12 @@
 package io.github.seggan.automation
 
+import io.github.seggan.automation.registries.ItemRegistry
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryOpenEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
 class Automation : AbstractAddon() {
@@ -20,6 +27,8 @@ class Automation : AbstractAddon() {
                 """.trimIndent()
             )
         }
+
+        ItemRegistry.register(this)
     }
 
     override fun onDisable() {
@@ -35,6 +44,8 @@ class Automation : AbstractAddon() {
     fun runLater(ticks: Int = 0, action: () -> Unit) {
         server.scheduler.runTaskLater(this, action, ticks.toLong())
     }
+
+    fun key(key: String) = NamespacedKey(this, key)
 
     override fun getJavaPlugin(): JavaPlugin = this
     override fun getBugTrackerURL(): String = "https://github.com/Seggan/Automation/issues"

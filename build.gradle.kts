@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
     id("xyz.jpenilla.run-paper") version "2.2.0"
 }
@@ -17,6 +18,7 @@ dependencies {
     library(kotlin("stdlib"))
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:RC-35")
+    api("dev.sefiraat:SefiLib:0.2.6")
 
     testImplementation(kotlin("test"))
 }
@@ -40,11 +42,19 @@ bukkit {
     version = project.version.toString()
     author = "Seggan"
     apiVersion = "1.20"
+    depend = listOf("Slimefun")
+}
+
+tasks.shadowJar {
+    relocate("dev.sefiraat.sefilib", "io.github.seggan.automation.sefilib") {
+        exclude("META-INF/**")
+    }
 }
 
 tasks.runServer {
     downloadPlugins {
         url("https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/master/Slimefun4-1104.jar")
     }
+    maxHeapSize = "2G"
     minecraftVersion("1.20.1")
 }

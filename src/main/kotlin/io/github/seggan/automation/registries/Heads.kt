@@ -1,0 +1,10 @@
+package io.github.seggan.automation.registries
+
+object Heads {
+
+    // https://minecraft-heads.com/custom-heads/decoration/60824-pc
+    const val PC = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmNkMDk1YzU5ZmZhMWU0OGMyNjhjZTRkNmUzN2I4Y2U0ZDlhNDQ4ODYyYjNkNzZkODNmNWM2ZDhjM2I2NzA5YyJ9fX0="
+
+    // The following are modified from https://minecraft-heads.com/custom-heads/decoration/32326-server-cpu
+    const val IRON_CPU = "ewogICJ0aW1lc3RhbXAiIDogMTY5OTA0MzAzMzA5MCwKICAicHJvZmlsZUlkIiA6ICIwZDZjODU0ODA3ZGQ0NWZkYmMxZDEyMzY2OGY1ZWQwZiIsCiAgInByb2ZpbGVOYW1lIiA6ICJXcWxmZnhJcmt0IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2I3OGEzZjIxNjlmMWQ0YjQxZTVhZWZmNjE2MmZjMGM3ZjE2MGM5YWZmOGFhODc2MGI1MzU0NzY4MDAzMzBiMjgiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ=="
+}
