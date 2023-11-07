@@ -40,17 +40,6 @@ class Automation : AbstractAddon() {
 
         val dir = config.getString("disk-dir") ?: error("disk-dir is not set")
         diskDir = dataFolder.toPath().resolve(dir)
-
-        val a = AutomationFSP(1000000).newFileSystem(diskDir.resolve("a"), mutableMapOf("create" to "true"))
-        val b = AutomationFSP(1000000).newFileSystem(diskDir.resolve("b"), mutableMapOf("create" to "true"))
-        val link = diskDir.resolve("a/mnt/test")
-        if (!link.exists()) {
-            link.createSymbolicLinkPointingTo(diskDir.toAbsolutePath().resolve("b"))
-            a.provider().reindex()
-        }
-
-        a.getPath("a.txt").moveTo(a.getPath("b.txt"))
-        log(a.getPath("/mnt/test/b.txt").readText())
     }
 
     override fun onDisable() {

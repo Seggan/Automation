@@ -142,8 +142,10 @@ class AutomationPath(
 
     override fun toString(): String = buildString {
         if (absolute) append("/")
-        append(path.joinToString("/"))
+        append(baseToString())
     }
+
+    internal fun baseToString(): String = path.joinToString("/")
 
     companion object {
         fun convert(path: Path, fs: AutomationFS): AutomationPath {

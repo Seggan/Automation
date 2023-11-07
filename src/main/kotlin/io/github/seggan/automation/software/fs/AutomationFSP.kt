@@ -15,8 +15,6 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
     private lateinit var root: Path
     private lateinit var fs: AutomationFS
 
-    private val pathMap = mutableMapOf<Path, Path>()
-
     override fun getScheme(): String = "automation"
 
     override fun newFileSystem(uri: URI, env: MutableMap<String, *>): AutomationFS =
@@ -26,19 +24,7 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
         path.createDirectories()
         root = path
         fs = AutomationFS(this)
-        reindex()
         return fs
-    }
-
-    fun reindex() {
-        pathMap.clear()
-        pathMap[fs.root] = root
-        root.walk(PathWalkOption.INCLUDE_DIRECTORIES, PathWalkOption.FOLLOW_LINKS).forEach { p ->
-            if (p == root) return@forEach
-            val relative = root.relativize(p)
-            val automationPath = AutomationPath.convert(relative, fs)
-            pathMap[automationPath.normalize().absolute()] = relative
-        }
     }
 
     override fun getFileSystem(uri: URI): AutomationFS {
@@ -58,20 +44,12 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
         options: MutableSet<out OpenOption>,
         vararg attrs: FileAttribute<*>
     ): SeekableByteChannel {
-        val realPath = path.getRealOrNull()
-        if (StandardOpenOption.CREATE in options) {
-            if (StandardOpenOption.CREATE_NEW in options && realPath != null)
-                throw FileAlreadyExistsException(path.toString())
-            if (realPath == null) {
-                var s = path.toString()
-                if (path.isAbsolute) {
-                    s = s.substring(1)
-                }
-                pathMap[path.normalize().absolute()] = Path(s)
-            }
+        val realPath = path.getRealPath()
+        if (StandardOpenOption.CREATE_NEW in options && realPath.exists()) {
+            throw FileAlreadyExistsException(path.toString())
         }
         return LimitingChannel(
-            Files.newByteChannel(path.getRealPath(), options, *attrs),
+            Files.newByteChannel(realPath, options, *attrs),
             limit - root.walk().filter(Path::isRegularFile).sumOf(Path::fileSize)
         )
     }
@@ -80,20 +58,13 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
         Files.newDirectoryStream(dir.getRealPath(), filter)
 
     override fun createDirectory(dir: Path, vararg attrs: FileAttribute<*>) {
-        if (dir.getRealOrNull() != null) throw FileAlreadyExistsException(dir.toString())
-        var s = dir.toString()
-        if (dir.isAbsolute) {
-            s = s.substring(1)
-        }
-        val realRealPath = root.resolve(s)
-        realRealPath.createFile()
-        pathMap[dir.normalize().absolute()] = root.relativize(realRealPath)
+        if (dir.exists()) throw FileAlreadyExistsException(dir.toString())
+        dir.getRealPath().createDirectory()
     }
 
     override fun delete(path: Path) {
-        val realPath = path.getRealPath()
-        realPath.deleteExisting()
-        pathMap.remove(path.normalize().absolute())
+        if (!path.exists()) throw NoSuchFileException(path.toString())
+        path.getRealPath().deleteExisting()
     }
 
     override fun copy(source: Path, target: Path, vararg options: CopyOption) {
@@ -102,7 +73,6 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
         if (!realSource.exists()) throw NoSuchFileException(source.toString())
         if (realTarget.exists()) throw FileAlreadyExistsException(target.toString())
         realSource.copyTo(realTarget)
-        pathMap[target.normalize().absolute()] = realTarget
     }
 
     override fun move(source: Path, target: Path, vararg options: CopyOption) {
@@ -111,8 +81,6 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
         if (!realSource.exists()) throw NoSuchFileException(source.toString())
         if (realTarget.exists()) throw FileAlreadyExistsException(target.toString())
         realSource.moveTo(realTarget)
-        pathMap[target.normalize().absolute()] = realTarget
-        pathMap.remove(source.normalize().absolute())
     }
 
     override fun isSameFile(path: Path, path2: Path): Boolean = path.getRealPath() == path2.getRealPath()
@@ -146,10 +114,8 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
     override fun setAttribute(path: Path, attribute: String, value: Any, vararg options: LinkOption) =
         FileSystems.getDefault().provider().setAttribute(path.getRealPath(), attribute, value, *options)
 
-    private fun Path.getRealPath(): Path = getRealOrNull() ?: throw NoSuchFileException(this.toString())
-
-    private fun Path.getRealOrNull(): Path? {
+    private fun Path.getRealPath(): Path {
         if (this !is AutomationPath) return this
-        return pathMap[this.normalize().absolute()]?.let { this@AutomationFSP.root.resolve(it) }
+        return this@AutomationFSP.root.resolve(baseToString())
     }
 }
