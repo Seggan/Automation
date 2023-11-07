@@ -15,6 +15,9 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
     private lateinit var root: Path
     private lateinit var fs: AutomationFS
 
+    private val usedSpace: Long
+        get() = root.walk().filter(Path::isRegularFile).sumOf(Path::fileSize)
+
     override fun getScheme(): String = "automation"
 
     override fun newFileSystem(uri: URI, env: MutableMap<String, *>): AutomationFS =
@@ -50,7 +53,7 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
         }
         return LimitingChannel(
             Files.newByteChannel(realPath, options, *attrs),
-            limit - root.walk().filter(Path::isRegularFile).sumOf(Path::fileSize)
+            limit - usedSpace
         )
     }
 
@@ -72,6 +75,11 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
         val realTarget = target.getRealPath()
         if (!realSource.exists()) throw NoSuchFileException(source.toString())
         if (realTarget.exists()) throw FileAlreadyExistsException(target.toString())
+        if (usedSpace + realSource.fileSize() > limit) throw FileSystemException(
+            source.toString(),
+            target.toString(),
+            "Not enough space"
+        )
         realSource.copyTo(realTarget)
     }
 
@@ -113,6 +121,18 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
 
     override fun setAttribute(path: Path, attribute: String, value: Any, vararg options: LinkOption) =
         FileSystems.getDefault().provider().setAttribute(path.getRealPath(), attribute, value, *options)
+
+    override fun createSymbolicLink(link: Path, target: Path, vararg attrs: FileAttribute<*>) {
+        if (link.exists()) throw FileAlreadyExistsException(link.toString())
+        link.getRealPath().createSymbolicLinkPointingTo(target.getRealPath())
+    }
+
+    override fun createLink(link: Path, existing: Path) {
+        if (link.exists()) throw FileAlreadyExistsException(link.toString())
+        link.getRealPath().createLinkPointingTo(existing.getRealPath())
+    }
+
+    override fun readSymbolicLink(link: Path): Path = link.getRealPath().readSymbolicLink()
 
     private fun Path.getRealPath(): Path {
         if (this !is AutomationPath) return this
