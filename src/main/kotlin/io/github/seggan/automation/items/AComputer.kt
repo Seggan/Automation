@@ -10,6 +10,8 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config
+import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow
@@ -22,7 +24,7 @@ abstract class AComputer(
     group: ItemGroup,
     item: SlimefunItemStack,
     type: RecipeType,
-    recipe: Array<ItemStack?>
+    recipe: Array<out ItemStack?>
 ) : SlimefunItem(group, item, type, recipe) {
 
     abstract val title: String
@@ -42,18 +44,22 @@ abstract class AComputer(
 
             override fun newInstance(menu: BlockMenu, b: Block) {
                 menu.addMenuClickHandler(SWITCH) { p, s, item, _ ->
-                    when (item) {
+                    val value = when (item) {
                         OFF -> {
                             menu.replaceExistingItem(s, ON)
-                            b.storeBoolean("on", true)
+                            true
                         }
+
                         ON -> {
                             menu.replaceExistingItem(s, OFF)
-                            b.storeBoolean("on", false)
+                            false
                         }
+
                         else -> throw AssertionError("Unreachable code")
                     }
+                    b.storeBoolean("on", value)
                     b.storePlayer("owner", p)
+                    onPowerOnOff(value)
                     false
                 }
             }
@@ -64,9 +70,20 @@ abstract class AComputer(
 
             override fun getSlotsAccessedByItemTransport(flow: ItemTransportFlow) = intArrayOf()
         }
+        addItemHandler(object : BlockTicker() {
+
+            override fun isSynchronized() = true
+
+            override fun tick(b: Block, item: SlimefunItem, data: Config) = mainTick(b, item, data)
+        })
     }
 
-    abstract fun onPowerOnOff(value: Boolean)
+    protected abstract fun onPowerOnOff(value: Boolean)
+    protected abstract fun tick(b: Block, item: SlimefunItem, data: Config)
+
+    private fun mainTick(b: Block, item: SlimefunItem, data: Config) {
+
+    }
 
     companion object {
         private val INV_BORDER = intArrayOf(5, 14, 23, 32, 41, 50)
