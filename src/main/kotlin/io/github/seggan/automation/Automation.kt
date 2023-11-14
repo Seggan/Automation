@@ -1,16 +1,9 @@
 package io.github.seggan.automation
 
-import io.github.seggan.automation.registries.ItemRegistry
-import io.github.seggan.automation.software.fs.AutomationFSP
-import org.bukkit.Material
+import io.github.seggan.automation.registries.Items
 import org.bukkit.NamespacedKey
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
-import org.bukkit.event.inventory.InventoryOpenEvent
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.file.Path
-import kotlin.io.path.*
 
 class Automation : AbstractAddon() {
 
@@ -20,7 +13,8 @@ class Automation : AbstractAddon() {
     override fun onEnable() {
         instance = this
 
-        saveDefaultConfig()
+        config.options().copyDefaults(true)
+        saveConfig()
 
         runLater {
             log(
@@ -36,9 +30,9 @@ class Automation : AbstractAddon() {
             )
         }
 
-        ItemRegistry.register(this)
+        Items.register(this)
 
-        val dir = config.getString("disk-dir") ?: error("disk-dir is not set")
+        val dir = config.getString("disks.dir") ?: error("disks.dir is not set")
         diskDir = dataFolder.toPath().resolve(dir)
     }
 

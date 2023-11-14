@@ -11,9 +11,9 @@ fun <T> Location.getBlockStorage(key: String, type: BlockStorageDataType<out T>)
 fun <T> Block.getBlockStorage(key: String, type: BlockStorageDataType<out T>): T? =
     location.getBlockStorage(key, type)
 
-fun <T> Location.setBlockStorage(key: String, type: BlockStorageDataType<in T>, value: T) {
+fun <T> Location.setBlockStorage(key: String, value: T, type: BlockStorageDataType<in T>) {
     BlockStorage.addBlockInfo(this, key, type.serialize(value))
 }
 
-fun <T> Block.setBlockStorage(key: String, type: BlockStorageDataType<in T>, value: T) =
-    location.setBlockStorage(key, type, value)
+fun <T> Block.setBlockStorage(key: String, value: T, type: BlockStorageDataType<in T>) =
+    location.setBlockStorage(key, value, type)

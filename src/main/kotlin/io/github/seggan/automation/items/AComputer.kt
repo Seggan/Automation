@@ -1,7 +1,7 @@
 package io.github.seggan.automation.items
 
-import io.github.seggan.automation.util.storeBoolean
-import io.github.seggan.automation.util.storePlayer
+import io.github.seggan.automation.serial.BlockStorageDataType
+import io.github.seggan.automation.serial.setBlockStorage
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
@@ -57,8 +57,8 @@ abstract class AComputer(
 
                         else -> throw AssertionError("Unreachable code")
                     }
-                    b.storeBoolean("on", value)
-                    b.storePlayer("owner", p)
+                    b.setBlockStorage("on", value, BlockStorageDataType.BOOLEAN)
+                    b.setBlockStorage("owner", p, BlockStorageDataType.PLAYER)
                     onPowerOnOff(value)
                     false
                 }

@@ -16,9 +16,12 @@ repositories {
 
 dependencies {
     library(kotlin("stdlib"))
+
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:RC-35")
     api("dev.sefiraat:SefiLib:0.2.6")
+
+    api("com.github.Seggan:metis:1.2.2")
 
     testImplementation(kotlin("test"))
 }
@@ -47,6 +50,9 @@ bukkit {
 
 tasks.shadowJar {
     relocate("dev.sefiraat.sefilib", "io.github.seggan.automation.sefilib") {
+        exclude("META-INF/**")
+    }
+    relocate("io.github.seggan.metis", "io.github.seggan.automation.metis") {
         exclude("META-INF/**")
     }
 }

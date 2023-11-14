@@ -12,7 +12,8 @@ import kotlin.io.path.*
 @OptIn(ExperimentalPathApi::class)
 class AutomationFSP(private val limit: Long) : FileSystemProvider() {
 
-    private lateinit var root: Path
+    lateinit var root: Path
+        private set
     private lateinit var fs: AutomationFS
 
     private val usedSpace: Long

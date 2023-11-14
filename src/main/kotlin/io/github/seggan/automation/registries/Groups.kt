@@ -2,13 +2,12 @@ package io.github.seggan.automation.registries
 
 import io.github.bakedlibs.dough.items.CustomItemStack
 import io.github.seggan.automation.pluginInstance
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils
 import org.bukkit.Material
 
-object GroupRegistry {
+object Groups {
 
     val MAIN = NestedItemGroup(
         pluginInstance.key("automation"),
