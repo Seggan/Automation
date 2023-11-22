@@ -19,9 +19,8 @@ dependencies {
 
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:RC-35")
-    api("dev.sefiraat:SefiLib:0.2.6")
 
-    api("com.github.Seggan:metis:1.2.2")
+    api("com.github.Seggan:metis:0.1.1")
 
     testImplementation(kotlin("test"))
 }
@@ -46,12 +45,16 @@ bukkit {
     author = "Seggan"
     apiVersion = "1.20"
     depend = listOf("Slimefun")
+    commands {
+        register("automation") {
+            description = "Automation plugin command"
+            permission = "op"
+            aliases = listOf("auto")
+        }
+    }
 }
 
 tasks.shadowJar {
-    relocate("dev.sefiraat.sefilib", "io.github.seggan.automation.sefilib") {
-        exclude("META-INF/**")
-    }
     relocate("io.github.seggan.metis", "io.github.seggan.automation.metis") {
         exclude("META-INF/**")
     }

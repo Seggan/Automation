@@ -73,13 +73,12 @@ class BasicCompositeBlockStorageDataType<S, T>(
 
 private object UuidDataType : BlockStorageDataType<UUID> {
 
+    private val uuidRegex = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$".toRegex()
+
     override fun serialize(value: UUID): String = value.toString()
 
     override fun deserialize(value: String): UUID? {
-        return try {
-            UUID.fromString(value)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
+        if (!uuidRegex.matches(value)) return null
+        return UUID.fromString(value)
     }
 }

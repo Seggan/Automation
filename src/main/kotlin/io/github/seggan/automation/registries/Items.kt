@@ -1,15 +1,18 @@
 package io.github.seggan.automation.registries
 
+import io.github.seggan.automation.items.Disk
 import io.github.seggan.automation.util.MaterialType
 import io.github.seggan.automation.util.buildSlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock
+import java.util.UUID
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Items {
 
-    val IRON_CPU = buildSlimefunItem(Themes.COMPONENT) {
+    val IRON_CPU = buildSlimefunItem {
         name = "&fIron CPU"
         id = "IRON_CPU"
         material = MaterialType.Head(Heads.IRON_CPU)
@@ -19,7 +22,7 @@ object Items {
         +"&eClock Speed: 2 Hz"
     }
 
-    val GOLD_CPU = buildSlimefunItem(Themes.COMPONENT) {
+    val GOLD_CPU = buildSlimefunItem {
         name = "&6Gold CPU"
         id = "GOLD_CPU"
         material = MaterialType.Head(Heads.GOLD_CPU)
@@ -29,7 +32,7 @@ object Items {
         +"&eClock Speed: 16 Hz"
     }
 
-    val REDSTONE_CPU = buildSlimefunItem(Themes.COMPONENT) {
+    val REDSTONE_CPU = buildSlimefunItem {
         name = "&4Redstone CPU"
         id = "REDSTONE_CPU"
         material = MaterialType.Head(Heads.REDSTONE_CPU)
@@ -39,7 +42,7 @@ object Items {
         +"&eClock Speed: 64 Hz"
     }
 
-    val DIAMOND_CPU = buildSlimefunItem(Themes.COMPONENT) {
+    val DIAMOND_CPU = buildSlimefunItem {
         name = "&bDiamond CPU"
         id = "DIAMOND_CPU"
         material = MaterialType.Head(Heads.DIAMOND_CPU)
@@ -49,7 +52,7 @@ object Items {
         +"&eClock Speed: 256 Hz"
     }
 
-    val REINFORCED_CPU = buildSlimefunItem(Themes.COMPONENT) {
+    val REINFORCED_CPU = buildSlimefunItem {
         name = "&7Reinforced CPU"
         id = "REINFORCED_CPU"
         material = MaterialType.Head(Heads.REINFORCED_CPU)
@@ -59,7 +62,7 @@ object Items {
         +"&eClock Speed: 1024 Hz"
     }
 
-    val NPU = buildSlimefunItem(Themes.COMPONENT) {
+    val NPU = buildSlimefunItem {
         name = "&1Nano Processing Unit"
         id = "NPU"
         material = MaterialType.Head(Heads.NPU)
@@ -69,6 +72,8 @@ object Items {
         +"&eClock Speed: As fast as possible"
     }
 
+    val DISK = Disk(512, UUID(0, 0))
+
     fun register(addon: SlimefunAddon) {
         UnplaceableBlock(Groups.COMPONENTS, IRON_CPU, RecipeType.NULL, arrayOf()).register(addon)
         UnplaceableBlock(Groups.COMPONENTS, GOLD_CPU, RecipeType.NULL, arrayOf()).register(addon)
@@ -76,5 +81,6 @@ object Items {
         UnplaceableBlock(Groups.COMPONENTS, DIAMOND_CPU, RecipeType.NULL, arrayOf()).register(addon)
         UnplaceableBlock(Groups.COMPONENTS, REINFORCED_CPU, RecipeType.NULL, arrayOf()).register(addon)
         UnplaceableBlock(Groups.COMPONENTS, NPU, RecipeType.NULL, arrayOf()).register(addon)
+        SlimefunItem(Groups.COMPONENTS, DISK, RecipeType.NULL, arrayOf()).register(addon)
     }
 }

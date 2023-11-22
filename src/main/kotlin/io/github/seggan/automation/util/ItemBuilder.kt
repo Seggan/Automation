@@ -1,11 +1,10 @@
 package io.github.seggan.automation.util
 
-import dev.sefiraat.sefilib.string.Theme
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils
 import org.bukkit.inventory.ItemStack
 
-class ItemBuilder(private val theme: Theme) {
+class ItemBuilder {
 
     var name: String? = null
     var material: MaterialType? = null
@@ -13,6 +12,7 @@ class ItemBuilder(private val theme: Theme) {
         set(value) {
             field = value?.let { "AUTOMATION_$it" }
         }
+
     private val lore = mutableListOf<String>()
 
     operator fun String.unaryPlus() {
@@ -24,12 +24,11 @@ class ItemBuilder(private val theme: Theme) {
         checkNotNull(material) { "Material is not set" }
         checkNotNull(id) { "ID is not set" }
 
-        return Theme.themedSlimefunItemStack(
+        return SlimefunItemStack(
             id!!,
             material!!.convert(),
-            theme,
             name!!,
-            lore
+            *lore.toTypedArray()
         )
     }
 }
@@ -50,6 +49,6 @@ sealed interface MaterialType {
     }
 }
 
-inline fun buildSlimefunItem(theme: Theme, builder: ItemBuilder.() -> Unit): SlimefunItemStack {
-    return ItemBuilder(theme).apply(builder).build()
+inline fun buildSlimefunItem(builder: ItemBuilder.() -> Unit): SlimefunItemStack {
+    return ItemBuilder().apply(builder).build()
 }

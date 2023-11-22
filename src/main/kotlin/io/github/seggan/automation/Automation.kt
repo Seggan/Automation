@@ -1,5 +1,6 @@
 package io.github.seggan.automation
 
+import io.github.seggan.automation.commands.SuperCommand
 import io.github.seggan.automation.registries.Items
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
@@ -29,6 +30,10 @@ class Automation : AbstractAddon() {
                 """.trimIndent()
             )
         }
+
+        val mainCommand = getCommand("automation") ?: error("Failed to get command")
+        mainCommand.setExecutor(SuperCommand.MAIN)
+        mainCommand.tabCompleter = SuperCommand.MAIN
 
         Items.register(this)
 
