@@ -2,6 +2,7 @@ package io.github.seggan.automation
 
 import io.github.seggan.automation.commands.SuperCommand
 import io.github.seggan.automation.registries.Items
+import io.github.seggan.automation.software.CpuTask
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.file.Path
@@ -39,10 +40,14 @@ class Automation : AbstractAddon() {
 
         val dir = config.getString("disks.dir") ?: error("disks.dir is not set")
         diskDir = dataFolder.toPath().resolve(dir)
+
+        CpuTask.shutDown = false
+        Thread(CpuTask, "Automation CPUs").start()
     }
 
     override fun onDisable() {
         instance = null
+        CpuTask.shutDown = true
     }
 
     fun log(message: String) {

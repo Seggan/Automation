@@ -44,9 +44,11 @@ object DiskManager {
         val uuid = UUID.randomUUID()
         getDisk(uuid, size)
         val item = Disk(size, uuid)
-        val pdc = item.itemMeta.persistentDataContainer
+        val meta = item.itemMeta
+        val pdc = meta.persistentDataContainer
         pdc.set(diskKey, UuidPdt, uuid)
         pdc.set(sizeKey, PersistentDataType.LONG, size)
+        item.itemMeta = meta
         return item
     }
 }

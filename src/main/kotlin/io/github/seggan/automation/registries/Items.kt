@@ -1,10 +1,13 @@
 package io.github.seggan.automation.registries
 
+import io.github.seggan.automation.items.Computer
+import io.github.seggan.automation.items.Cpu
 import io.github.seggan.automation.items.Disk
 import io.github.seggan.automation.util.MaterialType
 import io.github.seggan.automation.util.buildSlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock
 import java.util.UUID
@@ -72,15 +75,23 @@ object Items {
         +"&eClock Speed: As fast as possible"
     }
 
-    val DISK = Disk(512, UUID(0, 0))
+    val DISK: SlimefunItemStack = Disk(512, UUID(0, 0))
+
+    val COMPUTER = buildSlimefunItem {
+        name = "&fComputer"
+        id = "COMPUTER"
+        material = MaterialType.Head(Heads.PC)
+        +"&7A computer that can run programs."
+    }
 
     fun register(addon: SlimefunAddon) {
-        UnplaceableBlock(Groups.COMPONENTS, IRON_CPU, RecipeType.NULL, arrayOf()).register(addon)
-        UnplaceableBlock(Groups.COMPONENTS, GOLD_CPU, RecipeType.NULL, arrayOf()).register(addon)
-        UnplaceableBlock(Groups.COMPONENTS, REDSTONE_CPU, RecipeType.NULL, arrayOf()).register(addon)
-        UnplaceableBlock(Groups.COMPONENTS, DIAMOND_CPU, RecipeType.NULL, arrayOf()).register(addon)
-        UnplaceableBlock(Groups.COMPONENTS, REINFORCED_CPU, RecipeType.NULL, arrayOf()).register(addon)
-        UnplaceableBlock(Groups.COMPONENTS, NPU, RecipeType.NULL, arrayOf()).register(addon)
+        Cpu(Groups.COMPONENTS, IRON_CPU, 2, RecipeType.NULL, arrayOf()).register(addon)
+        Cpu(Groups.COMPONENTS, GOLD_CPU, 16, RecipeType.NULL, arrayOf()).register(addon)
+        Cpu(Groups.COMPONENTS, REDSTONE_CPU, 64, RecipeType.NULL, arrayOf()).register(addon)
+        Cpu(Groups.COMPONENTS, DIAMOND_CPU, 256, RecipeType.NULL, arrayOf()).register(addon)
+        Cpu(Groups.COMPONENTS, REINFORCED_CPU, 1024, RecipeType.NULL, arrayOf()).register(addon)
+        Cpu(Groups.COMPONENTS, NPU, Int.MAX_VALUE, RecipeType.NULL, arrayOf()).register(addon)
         SlimefunItem(Groups.COMPONENTS, DISK, RecipeType.NULL, arrayOf()).register(addon)
+        Computer(Groups.MACHINES, COMPUTER, RecipeType.NULL, arrayOf()).register(addon)
     }
 }

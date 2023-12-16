@@ -37,5 +37,6 @@ class SuperCommand : TabExecutor {
         val DISK = SuperCommand()
             .also { MAIN.registerSubCommand("disk", it) }
             .also { it.registerSubCommand("create", CreateCommand) }
+            .also { it.registerSubCommand("sf-dos", SfDosCommand) }
     }
 }

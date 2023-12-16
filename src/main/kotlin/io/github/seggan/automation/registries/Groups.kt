@@ -25,4 +25,13 @@ object Groups {
             "&bAutomation Components"
         )
     )
+
+    val MACHINES = SubItemGroup(
+        pluginInstance.key("automation_machines"),
+        MAIN,
+        CustomItemStack(
+            Material.IRON_BLOCK,
+            "&bAutomation Machines"
+        )
+    )
 }
