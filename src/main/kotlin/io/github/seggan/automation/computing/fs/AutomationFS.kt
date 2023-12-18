@@ -1,8 +1,7 @@
-package io.github.seggan.automation.software.fs
+package io.github.seggan.automation.computing.fs
 
 import java.nio.file.*
 import java.nio.file.attribute.UserPrincipalLookupService
-import java.nio.file.spi.FileSystemProvider
 
 class AutomationFS(private val provider: AutomationFSP) : FileSystem() {
 

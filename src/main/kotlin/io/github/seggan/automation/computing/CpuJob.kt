@@ -1,4 +1,4 @@
-package io.github.seggan.automation.software
+package io.github.seggan.automation.computing
 
 import io.github.seggan.metis.runtime.State
 import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition

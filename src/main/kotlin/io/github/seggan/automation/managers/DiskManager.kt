@@ -2,8 +2,8 @@ package io.github.seggan.automation.managers
 
 import io.github.seggan.automation.items.Disk
 import io.github.seggan.automation.pluginInstance
-import io.github.seggan.automation.software.fs.AutomationFS
-import io.github.seggan.automation.software.fs.AutomationFSP
+import io.github.seggan.automation.computing.fs.AutomationFS
+import io.github.seggan.automation.computing.fs.AutomationFSP
 import io.github.seggan.automation.serial.UuidPdt
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType

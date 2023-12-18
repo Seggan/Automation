@@ -1,11 +1,12 @@
 package io.github.seggan.automation.items
 
+import io.github.seggan.automation.computing.ChatInputStream
 import io.github.seggan.automation.managers.DiskManager
 import io.github.seggan.automation.serial.BlockStorageDataType
 import io.github.seggan.automation.serial.setBlockStorage
-import io.github.seggan.automation.software.ChatOutputStream
-import io.github.seggan.automation.software.CpuJob
-import io.github.seggan.automation.software.CpuTask
+import io.github.seggan.automation.computing.ChatOutputStream
+import io.github.seggan.automation.computing.CpuJob
+import io.github.seggan.automation.computing.CpuTask
 import io.github.seggan.automation.util.Mutex
 import io.github.seggan.automation.util.position
 import io.github.seggan.metis.parsing.CodeSource
@@ -40,7 +41,6 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.inventory.ItemStack
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.io.path.exists
 
 class Computer(
@@ -165,6 +165,7 @@ class Computer(
         }
 
         val state = State()
+        state.stdin = ChatInputStream(b.location)
         state.stdout = ChatOutputStream(b.location, NamedTextColor.WHITE)
         state.stderr = ChatOutputStream(b.location, NamedTextColor.RED)
         state.loadChunk(chunk)
@@ -177,12 +178,12 @@ class Computer(
 
     private fun powerOff(b: Block) {
         val pos = b.position
-        CpuTask.jobs.removeIf { it.block == pos }
+        CpuTask.stopJob(CpuTask.jobs.first { it.block == pos })
     }
 
     private fun onBreak(b: Block) {
         val pos = b.position
-        CpuTask.jobs.removeIf { it.block == pos }
+        CpuTask.stopJob(CpuTask.jobs.first { it.block == pos })
         syncJobs.remove(pos)
     }
 

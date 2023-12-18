@@ -1,8 +1,6 @@
-package io.github.seggan.automation.software
+package io.github.seggan.automation.computing
 
 import io.github.seggan.automation.pluginInstance
-import io.github.seggan.automation.util.location
-import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Location

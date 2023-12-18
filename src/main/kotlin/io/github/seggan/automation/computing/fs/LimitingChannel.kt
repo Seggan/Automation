@@ -1,4 +1,4 @@
-package io.github.seggan.automation.software.fs
+package io.github.seggan.automation.computing.fs
 
 import java.nio.ByteBuffer
 import java.nio.channels.SeekableByteChannel

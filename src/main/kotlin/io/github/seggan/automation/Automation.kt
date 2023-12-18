@@ -2,7 +2,7 @@ package io.github.seggan.automation
 
 import io.github.seggan.automation.commands.SuperCommand
 import io.github.seggan.automation.registries.Items
-import io.github.seggan.automation.software.CpuTask
+import io.github.seggan.automation.computing.CpuTask
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.file.Path

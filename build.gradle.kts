@@ -20,7 +20,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:RC-35")
 
-    api("com.github.Seggan:metis:0.4.0")
+    api("com.github.Seggan:metis:-SNAPSHOT")
 
     testImplementation(kotlin("test"))
 }
