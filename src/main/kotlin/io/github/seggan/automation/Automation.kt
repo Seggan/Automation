@@ -6,10 +6,14 @@ import io.github.seggan.automation.computing.CpuTask
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.file.Path
+import kotlin.properties.Delegates
 
 class Automation : AbstractAddon() {
 
     lateinit var diskDir: Path
+        private set
+
+    var interactionRadius by Delegates.notNull<Double>()
         private set
 
     override fun onEnable() {
@@ -18,7 +22,7 @@ class Automation : AbstractAddon() {
         config.options().copyDefaults(true)
         saveConfig()
 
-        runLater {
+        runOnNextTick {
             log(
                 """
                 ################# Automation $pluginVersion #################
@@ -41,6 +45,8 @@ class Automation : AbstractAddon() {
         val dir = config.getString("disks.dir") ?: error("disks.dir is not set")
         diskDir = dataFolder.toPath().resolve(dir)
 
+        interactionRadius = config.getDouble("interaction-radius", 3.0)
+
         CpuTask.shutDown = false
         Thread(CpuTask, "Automation CPUs").start()
     }
@@ -56,7 +62,7 @@ class Automation : AbstractAddon() {
         }
     }
 
-    fun runLater(ticks: Int = 0, action: () -> Unit) {
+    fun runOnNextTick(ticks: Int = 0, action: () -> Unit) {
         server.scheduler.runTaskLater(this, action, ticks.toLong())
     }
 

@@ -1,7 +1,9 @@
 package io.github.seggan.automation.computing
 
+import io.github.seggan.metis.runtime.State
 import io.github.seggan.metis.runtime.chunk.StepResult
 import io.github.seggan.metis.util.MetisException
+import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition
 import java.io.PrintWriter
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -40,5 +42,15 @@ object CpuTask : Runnable {
         job.state.stdin.close()
         job.state.stdout.close()
         job.state.stderr.close()
+    }
+
+    fun getLocationOfState(state: State): BlockPosition? {
+        state.parentState?.let { return getLocationOfState(it) }
+        for (job in jobs) {
+            if (job.state == state) {
+                return job.block
+            }
+        }
+        return null
     }
 }

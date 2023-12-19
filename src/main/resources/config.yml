@@ -1,2 +1,5 @@
 disks:
   dir: disks
+
+computers:
+  interaction-radius: 3.0
