@@ -2,53 +2,48 @@ package io.github.seggan.automation.computing.metis
 
 import io.github.seggan.automation.computing.CpuTask
 import io.github.seggan.automation.pluginInstance
-import io.github.seggan.automation.serial.BlockPosPdt
 import io.github.seggan.automation.util.WaitingFunction
 import io.github.seggan.automation.util.WaitingFunctionExecutor
-import io.github.seggan.automation.util.paginate
 import io.github.seggan.metis.runtime.*
 import io.github.seggan.metis.util.pop
 import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.ComponentBuilder
-import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.title.Title
 import org.apache.http.client.utils.URIBuilder
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerEditBookEvent
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.BookMeta
+import org.java_websocket.WebSocket
+import org.java_websocket.handshake.ClientHandshake
+import org.java_websocket.server.WebSocketServer
+import java.lang.Exception
+import java.net.InetSocketAddress
 import java.util.concurrent.ConcurrentHashMap
 
 object EditTextFunction : WaitingFunction(Arity.ONE) {
 
     private val finished = ConcurrentHashMap<BlockPosition, String?>()
 
-    init {
-        Bukkit.getPluginManager().registerEvents(this, pluginInstance)
-    }
+    private val portRange = 30000..40000
 
     override fun getExecutor(nargs: Int): WaitingFunctionExecutor = object : WaitingFunctionExecutor {
 
         lateinit var block: BlockPosition
+        lateinit var socket: WebSocketServer
 
         override fun init(state: State) {
             val text = state.stack.pop().stringValue()
             block = CpuTask.getLocationOfState(state)!!
             val location = block.toLocation()
 
+            val port = portRange.random()
+            val url = URIBuilder("https://seggan.github.io/automation")
+                .addParameter("ip", pluginInstance.localIp)
+                .addParameter("port", port.toString())
+                .build()
+
             pluginInstance.runOnNextTick {
                 val players = location.getNearbyPlayers(pluginInstance.interactionRadius)
                 val nearest = players.minByOrNull { it.location.distanceSquared(location) } ?: return@runOnNextTick
 
-                val url = URIBuilder("https://seggan.github.io/automation")
-                    .addParameter("conn", nearest.address.hostName)
-                    .build()
-                val link = Component.text().clickEvent(ClickEvent.openUrl())
+                val link = Component.text().clickEvent(ClickEvent.openUrl(url.toURL()))
             }
         }
 

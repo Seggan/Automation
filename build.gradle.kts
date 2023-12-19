@@ -22,6 +22,8 @@ dependencies {
 
     api("com.github.Seggan:metis:-SNAPSHOT")
 
+    library("org.java-websocket:Java-WebSocket:1.5.4")
+
     testImplementation(kotlin("test"))
 }
 

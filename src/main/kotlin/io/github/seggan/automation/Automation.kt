@@ -5,6 +5,8 @@ import io.github.seggan.automation.registries.Items
 import io.github.seggan.automation.computing.CpuTask
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
+import java.net.URI
+import java.net.URL
 import java.nio.file.Path
 import kotlin.properties.Delegates
 
@@ -14,6 +16,9 @@ class Automation : AbstractAddon() {
         private set
 
     var interactionRadius by Delegates.notNull<Double>()
+        private set
+
+    lateinit var localIp: String
         private set
 
     override fun onEnable() {
@@ -47,6 +52,10 @@ class Automation : AbstractAddon() {
 
         interactionRadius = config.getDouble("interaction-radius", 3.0)
 
+        URL("https://checkip.amazonaws.com/").openStream().bufferedReader().use {
+            localIp = it.readLine()
+        }
+
         CpuTask.shutDown = false
         Thread(CpuTask, "Automation CPUs").start()
     }
@@ -74,5 +83,5 @@ class Automation : AbstractAddon() {
 
 private var instance: Automation? = null
 
-val pluginInstance: Automation
+internal val pluginInstance: Automation
     get() = instance ?: error("Plugin is not enabled")
