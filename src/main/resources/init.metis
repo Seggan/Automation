@@ -1,8 +1,29 @@
-while true
-    let inp = input("echo: ")
-    if inp == "exit"
-        break
-    end
-    io.stdout().write('echoed: ')
-    print(inp)
+print("Starting...")
+
+import paths
+
+global fn printErr(x)
+    let out = io.stderr()
+    let s = str(x)
+    out.write(s.encode("UTF-8"))
+    out.write('\n')
+    out.flush()
 end
+
+if not paths.exists("/boot/boot.metis")
+    printErr("No SF-DOS installation found. Proceeding with installation...")
+
+    paths.createDir("/boot")
+
+    import libapm
+    let boot = libapm.getFile("sf-dos", libapm.getVersions("sf-dos").first(), "boot.metis")
+    paths.writeAll("/boot/boot.metis", boot)
+end
+
+global fn executeFile(path)
+    let file = paths.readText(path)
+    let chunk = loadChunk(paths.fileName(path), file)
+    return chunk()
+end
+
+executeFile("/boot/boot.metis")

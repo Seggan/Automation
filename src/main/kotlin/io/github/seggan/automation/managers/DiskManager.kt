@@ -19,9 +19,11 @@ object DiskManager {
     private val diskKey = pluginInstance.key("disk-id")
     private val sizeKey = pluginInstance.key("disk-size")
 
+    private val diskDir = pluginInstance.dataFolder.toPath().resolve("disks")
+
     fun getDisk(uuid: UUID, limit: Long): FileSystem = disks.getOrPut(uuid) {
         AutomationFSP(limit).newFileSystem(
-            pluginInstance.diskDir.resolve(uuid.toString()),
+            diskDir.resolve(uuid.toString()),
             mutableMapOf("create" to "true")
         )
     }

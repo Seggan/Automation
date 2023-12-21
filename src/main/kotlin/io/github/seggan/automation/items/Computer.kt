@@ -7,6 +7,7 @@ import io.github.seggan.automation.serial.setBlockStorage
 import io.github.seggan.automation.computing.ChatOutputStream
 import io.github.seggan.automation.computing.CpuJob
 import io.github.seggan.automation.computing.CpuTask
+import io.github.seggan.automation.computing.metis.preinit
 import io.github.seggan.automation.util.Mutex
 import io.github.seggan.automation.util.position
 import io.github.seggan.metis.parsing.CodeSource
@@ -33,6 +34,7 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -153,6 +155,7 @@ class Computer(
                 .mapTo(mutableListOf()) {
                     Component.text()
                         .color(NamedTextColor.YELLOW)
+                        .style(Style.empty())
                         .content(it)
                         .build()
                 }
@@ -165,9 +168,12 @@ class Computer(
         }
 
         val state = State()
+        state.fileSystem = initPath.fileSystem
+        state.currentDir = initPath.fileSystem.getPath("/")
         state.stdin = ChatInputStream(b.location)
         state.stdout = ChatOutputStream(b.location, NamedTextColor.WHITE)
         state.stderr = ChatOutputStream(b.location, NamedTextColor.RED)
+        state.preinit()
         state.loadChunk(chunk)
         state.call(0)
 
@@ -178,12 +184,12 @@ class Computer(
 
     private fun powerOff(b: Block) {
         val pos = b.position
-        CpuTask.stopJob(CpuTask.jobs.first { it.block == pos })
+        CpuTask.jobs.firstOrNull { it.block == pos }?.let(CpuTask::stopJob)
     }
 
     private fun onBreak(b: Block) {
         val pos = b.position
-        CpuTask.stopJob(CpuTask.jobs.first { it.block == pos })
+        CpuTask.jobs.firstOrNull { it.block == pos }?.let(CpuTask::stopJob)
         syncJobs.remove(pos)
     }
 

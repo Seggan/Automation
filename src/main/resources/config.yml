@@ -1,5 +1,6 @@
-disks:
-  dir: disks
-
 computers:
   interaction-radius: 3.0
+
+os:
+  apm-repos:
+    - "file:plugins/Automation/local-repo/"

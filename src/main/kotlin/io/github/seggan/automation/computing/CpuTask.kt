@@ -1,5 +1,6 @@
 package io.github.seggan.automation.computing
 
+import io.github.seggan.automation.pluginInstance
 import io.github.seggan.metis.runtime.State
 import io.github.seggan.metis.runtime.chunk.StepResult
 import io.github.seggan.metis.util.MetisException
@@ -26,11 +27,15 @@ object CpuTask : Runnable {
                             stopJob(job)
                         }
                     } catch (e: MetisException) {
-                        e.printStackTrace(PrintWriter(job.state.stderr))
-                        jobs.remove(job)
+                        val stderr = job.state.stderr
+                        stderr.write(e.report("<N/A>").toByteArray())
+                        stderr.flush()
+                        stopJob(job)
                     } catch (e: Exception) {
-                        e.printStackTrace()
-                        jobs.remove(job)
+                        stopJob(job)
+                        pluginInstance.runOnNextTick {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -39,9 +44,12 @@ object CpuTask : Runnable {
 
     fun stopJob(job: CpuJob) {
         jobs.remove(job)
-        job.state.stdin.close()
-        job.state.stdout.close()
-        job.state.stderr.close()
+        val state = job.state
+        state.stdout.flush()
+        state.stderr.flush()
+        state.stdout.close()
+        state.stderr.close()
+        state.stdin.close()
     }
 
     fun getLocationOfState(state: State): BlockPosition? {

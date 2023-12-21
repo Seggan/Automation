@@ -8,18 +8,18 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.net.URI
 import java.net.URL
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
 import kotlin.properties.Delegates
 
 class Automation : AbstractAddon() {
-
-    lateinit var diskDir: Path
-        private set
 
     var interactionRadius by Delegates.notNull<Double>()
         private set
 
     lateinit var localIp: String
         private set
+
+    val apmRepos = mutableSetOf<URI>()
 
     override fun onEnable() {
         instance = this
@@ -47,10 +47,13 @@ class Automation : AbstractAddon() {
 
         Items.register(this)
 
-        val dir = config.getString("disks.dir") ?: error("disks.dir is not set")
-        diskDir = dataFolder.toPath().resolve(dir)
+        interactionRadius = config.getDouble("computers.interaction-radius", 3.0)
 
-        interactionRadius = config.getDouble("interaction-radius", 3.0)
+        dataFolder.toPath().resolve("local-repo").createDirectories()
+
+        for (repo in config.getStringList("os.apm-repos")) {
+            apmRepos.add(URI(repo))
+        }
 
         URL("https://checkip.amazonaws.com/").openStream().bufferedReader().use {
             localIp = it.readLine()

@@ -18,7 +18,7 @@ dependencies {
     library(kotlin("stdlib"))
 
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
-    compileOnly("com.github.Slimefun:Slimefun4:RC-35")
+    compileOnly("com.github.Slimefun:Slimefun4:RC-36")
 
     api("com.github.Seggan:metis:-SNAPSHOT")
 
