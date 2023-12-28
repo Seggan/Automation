@@ -3,4 +3,5 @@ computers:
 
 os:
   apm-repos:
+    - "https://raw.githubusercontent.com/Seggan/apm-repo/main/"
     - "file:plugins/Automation/local-repo/"
