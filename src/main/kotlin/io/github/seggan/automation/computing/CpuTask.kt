@@ -1,6 +1,7 @@
 package io.github.seggan.automation.computing
 
 import io.github.seggan.automation.pluginInstance
+import io.github.seggan.metis.runtime.MetisRuntimeException
 import io.github.seggan.metis.runtime.State
 import io.github.seggan.metis.runtime.chunk.StepResult
 import io.github.seggan.metis.util.MetisException
@@ -31,6 +32,11 @@ object CpuTask : Runnable {
                         stderr.write(e.report("<N/A>").toByteArray())
                         stderr.flush()
                         stopJob(job)
+                        if (e is MetisRuntimeException && e.type == "InternalError") {
+                            pluginInstance.runOnNextTick {
+                                e.printStackTrace()
+                            }
+                        }
                     } catch (e: Exception) {
                         stopJob(job)
                         pluginInstance.runOnNextTick {

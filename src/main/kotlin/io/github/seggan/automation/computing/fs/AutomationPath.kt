@@ -1,11 +1,13 @@
 package io.github.seggan.automation.computing.fs
 
+import org.jetbrains.annotations.VisibleForTesting
 import java.net.URI
 import java.nio.file.*
 import kotlin.io.path.absolute
 
 class AutomationPath(
-    private val path: List<String>,
+    @VisibleForTesting
+    internal val path: List<String>,
     private val absolute: Boolean,
     private val fs: AutomationFS
 ) : Path {
@@ -51,13 +53,13 @@ class AutomationPath(
 
     override fun getName(index: Int): Path = AutomationPath(
         listOf(path[index]),
-        absolute && index == 0,
+        false,
         fs
     )
 
     override fun subpath(beginIndex: Int, endIndex: Int): Path = AutomationPath(
         path.subList(beginIndex, endIndex),
-        absolute && beginIndex == 0,
+        false,
         fs
     )
 
@@ -85,18 +87,16 @@ class AutomationPath(
         val newPath = mutableListOf<String>()
         for (part in path) {
             when (part) {
-                "." -> {
-                    // Do nothing
-                }
+                "." -> {} // Do nothing
+
                 ".." -> {
                     if (newPath.isEmpty()) {
                         throw NoSuchFileException(path.joinToString("/"))
                     }
                     newPath.removeLast()
                 }
-                else -> {
-                    newPath.add(part)
-                }
+
+                else -> newPath.add(part)
             }
         }
         return AutomationPath(newPath, absolute, fs)
@@ -123,7 +123,7 @@ class AutomationPath(
         return AutomationPath(result.toList(), false, fs)
     }
 
-    override fun toUri(): URI = URI(fs.provider().scheme,"/${path.joinToString("/")}", null)
+    override fun toUri(): URI = URI(fs.provider().scheme, "/${path.joinToString("/")}", null)
 
     override fun toAbsolutePath(): Path = if (absolute) this else AutomationPath(path, true, fs)
 

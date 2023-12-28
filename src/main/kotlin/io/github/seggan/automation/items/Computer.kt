@@ -169,7 +169,7 @@ class Computer(
 
         val state = State()
         state.fileSystem = initPath.fileSystem
-        state.currentDir = initPath.fileSystem.getPath("/")
+        state.currentDir = "/"
         state.stdin = ChatInputStream(b.location)
         state.stdout = ChatOutputStream(b.location, NamedTextColor.WHITE)
         state.stderr = ChatOutputStream(b.location, NamedTextColor.RED)

@@ -59,20 +59,12 @@ class AutomationFS(private val provider: AutomationFSP) : FileSystem() {
         if (more.isNotEmpty()) return getPath(first + "/" + more.joinToString("/"))
         val input = first.trim()
         if (input == "/") return root
-        val names = input.split('/')
-        val path = mutableListOf<String>()
-        var absolute = false
-        for (i in names.indices) {
-            val name = names[i].trim()
-            if (name.isEmpty()) {
-                if (i == 0) {
-                    absolute = true
-                    continue
-                }
-                throw InvalidPathException(input, "Empty path component", i)
-            }
-            path += name
-        }
-        return AutomationPath(path, absolute, this)
+        return AutomationPath(
+            pathRegex.findAll(input).map(MatchResult::value).toList(),
+            input.startsWith('/'),
+            this
+        )
     }
 }
+
+private val pathRegex = "[^/]+".toRegex()

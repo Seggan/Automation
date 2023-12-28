@@ -58,8 +58,27 @@ class AutomationFSP(private val limit: Long) : FileSystemProvider() {
         )
     }
 
-    override fun newDirectoryStream(dir: Path, filter: DirectoryStream.Filter<in Path>): DirectoryStream<Path> =
-        Files.newDirectoryStream(dir.getRealPath(), filter)
+    override fun newDirectoryStream(dir: Path, filter: DirectoryStream.Filter<in Path>): DirectoryStream<Path> {
+        val realPath = dir.getRealPath()
+        val stream = Files.newDirectoryStream(realPath, filter)
+        return object : DirectoryStream<Path> {
+            override fun iterator(): MutableIterator<Path> = object : MutableIterator<Path> {
+
+                val iterator = stream.iterator()
+
+                override fun remove() = iterator.remove()
+                override fun hasNext(): Boolean = iterator.hasNext()
+
+                override fun next(): Path {
+                    val next = iterator.next()
+                    val rel = realPath.relativize(next)
+                    return fs.getPath(rel.toString())
+                }
+            }
+
+            override fun close() = stream.close()
+        }
+    }
 
     override fun createDirectory(dir: Path, vararg attrs: FileAttribute<*>) {
         if (dir.exists()) throw FileAlreadyExistsException(dir.toString())

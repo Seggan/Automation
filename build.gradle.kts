@@ -20,7 +20,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:RC-36")
 
-    api("com.github.Seggan:metis:-SNAPSHOT")
+    api("com.github.Seggan:metis:c0bde92f08")
 
     library("org.java-websocket:Java-WebSocket:1.5.4")
 
@@ -55,14 +55,12 @@ bukkit {
     }
 }
 
-/*
 tasks.shadowJar {
+    dependsOn(tasks.test)
     relocate("io.github.seggan.metis", "io.github.seggan.automation.metis") {
         exclude("META-INF/**")
     }
 }
-*/
- */
 
 tasks.runServer {
     downloadPlugins {
