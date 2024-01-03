@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.seggan"
-version = "1.0-SNAPSHOT"
+version = "UNOFFICIAL"
 
 repositories {
     mavenCentral()
@@ -19,6 +19,7 @@ dependencies {
 
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:RC-36")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
 
     api("com.github.Seggan:metis:c0bde92f08")
 
@@ -58,6 +59,9 @@ bukkit {
 tasks.shadowJar {
     dependsOn(tasks.test)
     relocate("io.github.seggan.metis", "io.github.seggan.automation.metis") {
+        exclude("META-INF/**")
+    }
+    relocate("org.bstats", "io.github.seggan.automation.bstats") {
         exclude("META-INF/**")
     }
 }

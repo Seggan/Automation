@@ -3,6 +3,7 @@ package io.github.seggan.automation
 import io.github.seggan.automation.commands.SuperCommand
 import io.github.seggan.automation.computing.CpuTask
 import io.github.seggan.automation.registries.Items
+import org.bstats.bukkit.Metrics
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import java.net.URI
@@ -25,6 +26,8 @@ class Automation : AbstractAddon() {
 
         config.options().copyDefaults(true)
         saveConfig()
+
+        Metrics(this, 20638)
 
         runOnNextTick {
             log(
