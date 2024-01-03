@@ -41,9 +41,11 @@ sealed interface MaterialType {
     class Material(private val material: org.bukkit.Material) : MaterialType {
         override fun convert() = ItemStack(material)
     }
+
     class ItemStack(private val itemStack: org.bukkit.inventory.ItemStack) : MaterialType {
         override fun convert() = itemStack
     }
+
     class Head(private val texture: String) : MaterialType {
         override fun convert() = SlimefunUtils.getCustomHead(texture)
     }

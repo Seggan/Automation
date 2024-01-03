@@ -1,20 +1,23 @@
 package io.github.seggan.automation.registries
 
+import io.github.seggan.automation.computing.peripherals.Sensor
 import io.github.seggan.automation.items.Computer
 import io.github.seggan.automation.items.Cpu
 import io.github.seggan.automation.items.Disk
+import io.github.seggan.automation.items.Peripheral
 import io.github.seggan.automation.util.MaterialType
 import io.github.seggan.automation.util.buildSlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
-import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock
-import java.util.UUID
+import org.bukkit.Material
+import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Items {
 
+    //<editor-fold desc="CPUs" defaultstate="collapsed">
     val IRON_CPU = buildSlimefunItem {
         name = "&fIron CPU"
         id = "IRON_CPU"
@@ -74,6 +77,39 @@ object Items {
         +""
         +"&eClock Speed: As fast as possible"
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Peripherals" defaultstate="collapsed">
+    val SENSOR_1 = buildSlimefunItem {
+        name = "&fSensor I"
+        id = "SENSOR_1"
+        material = MaterialType.Material(Material.BEACON)
+        +"&7A sensor that can get information about nearby"
+        +"&7blocks and entities."
+        +""
+        +"&eRange: 4 blocks"
+    }
+
+    val SENSOR_2 = buildSlimefunItem {
+        name = "&fSensor II"
+        id = "SENSOR_2"
+        material = MaterialType.Material(Material.BEACON)
+        +"&7A sensor that can get information about nearby"
+        +"&7blocks and entities."
+        +""
+        +"&eRange: 16 blocks"
+    }
+
+    val SENSOR_3 = buildSlimefunItem {
+        name = "&fSensor III"
+        id = "SENSOR_3"
+        material = MaterialType.Material(Material.BEACON)
+        +"&7A sensor that can get information about nearby"
+        +"&7blocks and entities."
+        +""
+        +"&eRange: 64 blocks"
+    }
+    //</editor-fold>
 
     val DISK: SlimefunItemStack = Disk(512, UUID(0, 0))
 
@@ -91,6 +127,11 @@ object Items {
         Cpu(Groups.COMPONENTS, DIAMOND_CPU, 256, RecipeType.NULL, arrayOf()).register(addon)
         Cpu(Groups.COMPONENTS, REINFORCED_CPU, 1024, RecipeType.NULL, arrayOf()).register(addon)
         Cpu(Groups.COMPONENTS, NPU, Int.MAX_VALUE, RecipeType.NULL, arrayOf()).register(addon)
+
+        Peripheral(Groups.COMPONENTS, SENSOR_1, Sensor(4), RecipeType.NULL, arrayOf()).register(addon)
+        Peripheral(Groups.COMPONENTS, SENSOR_2, Sensor(16), RecipeType.NULL, arrayOf()).register(addon)
+        Peripheral(Groups.COMPONENTS, SENSOR_3, Sensor(64), RecipeType.NULL, arrayOf()).register(addon)
+
         SlimefunItem(Groups.COMPONENTS, DISK, RecipeType.NULL, arrayOf()).register(addon)
         Computer(Groups.MACHINES, COMPUTER, RecipeType.NULL, arrayOf()).register(addon)
     }

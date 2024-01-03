@@ -1,13 +1,14 @@
 package io.github.seggan.automation.items
 
 import io.github.seggan.automation.computing.ChatInputStream
-import io.github.seggan.automation.managers.DiskManager
-import io.github.seggan.automation.serial.BlockStorageDataType
-import io.github.seggan.automation.serial.setBlockStorage
 import io.github.seggan.automation.computing.ChatOutputStream
 import io.github.seggan.automation.computing.CpuJob
 import io.github.seggan.automation.computing.CpuTask
 import io.github.seggan.automation.computing.metis.preinit
+import io.github.seggan.automation.computing.peripherals.Peripherals
+import io.github.seggan.automation.managers.DiskManager
+import io.github.seggan.automation.serial.BlockStorageDataType
+import io.github.seggan.automation.serial.setBlockStorage
 import io.github.seggan.automation.util.Mutex
 import io.github.seggan.automation.util.position
 import io.github.seggan.metis.parsing.CodeSource
@@ -116,6 +117,7 @@ class Computer(
     }
 
     private fun powerOn(b: Block) {
+        val pos = b.position
         val inv = BlockStorage.getInventory(b)
         var cpuSpeed = -1L
         for (component in COMPONENT_SLOTS) {
@@ -145,6 +147,14 @@ class Computer(
         if (initPath == null) {
             inv.replaceExistingItem(STATUS, STATUS_NO_DISK)
             return
+        }
+
+        for (component in COMPONENT_SLOTS) {
+            val item = inv.getItemInSlot(component)
+            val sfItem = getByItem(item)
+            if (sfItem is Peripheral) {
+                Peripherals.addPeripheral(pos, sfItem.lib)
+            }
         }
 
         val chunk = try {
@@ -177,19 +187,18 @@ class Computer(
         state.loadChunk(chunk)
         state.call(0)
 
-        val job = CpuJob(b.position, state, 0, cpuSpeed)
-        CpuTask.jobs.add(job)
+        val job = CpuJob(pos, state, 0, cpuSpeed)
+        CpuTask.jobs += job
         inv.replaceExistingItem(STATUS, STATUS_OK)
     }
 
     private fun powerOff(b: Block) {
-        val pos = b.position
-        CpuTask.jobs.firstOrNull { it.block == pos }?.let(CpuTask::stopJob)
+        CpuTask.stopJob(b.position)
     }
 
     private fun onBreak(b: Block) {
         val pos = b.position
-        CpuTask.jobs.firstOrNull { it.block == pos }?.let(CpuTask::stopJob)
+        CpuTask.stopJob(pos)
         syncJobs.remove(pos)
     }
 

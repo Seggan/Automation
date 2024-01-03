@@ -1,12 +1,12 @@
 package io.github.seggan.automation.computing
 
+import io.github.seggan.automation.computing.peripherals.Peripherals
 import io.github.seggan.automation.pluginInstance
 import io.github.seggan.metis.runtime.MetisRuntimeException
 import io.github.seggan.metis.runtime.State
 import io.github.seggan.metis.runtime.chunk.StepResult
 import io.github.seggan.metis.util.MetisException
 import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition
-import java.io.PrintWriter
 import java.util.concurrent.CopyOnWriteArrayList
 
 object CpuTask : Runnable {
@@ -50,21 +50,32 @@ object CpuTask : Runnable {
 
     fun stopJob(job: CpuJob) {
         jobs.remove(job)
+
         val state = job.state
-        state.stdout.flush()
-        state.stderr.flush()
         state.stdout.close()
         state.stderr.close()
         state.stdin.close()
+
+        val block = job.block
+        Peripherals.removePeripherals(block)
     }
 
-    fun getLocationOfState(state: State): BlockPosition? {
-        state.parentState?.let { return getLocationOfState(it) }
+    fun stopJob(block: BlockPosition) {
+        for (job in jobs) {
+            if (job.block == block) {
+                stopJob(job)
+                return
+            }
+        }
+    }
+
+    fun getPositionOfState(state: State): BlockPosition {
+        state.parentState?.let { return getPositionOfState(it) }
         for (job in jobs) {
             if (job.state == state) {
                 return job.block
             }
         }
-        return null
+        throw IllegalArgumentException("State is not running")
     }
 }

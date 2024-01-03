@@ -10,11 +10,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import org.apache.http.client.utils.URIBuilder
-import org.java_websocket.WebSocket
-import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
-import java.lang.Exception
-import java.net.InetSocketAddress
 import java.util.concurrent.ConcurrentHashMap
 
 object EditTextFunction : WaitingFunction(Arity.ONE) {
@@ -30,7 +26,7 @@ object EditTextFunction : WaitingFunction(Arity.ONE) {
 
         override fun init(state: State) {
             val text = state.stack.pop().stringValue()
-            block = CpuTask.getLocationOfState(state)!!
+            block = CpuTask.getPositionOfState(state)
             val location = block.toLocation()
 
             val port = portRange.random()

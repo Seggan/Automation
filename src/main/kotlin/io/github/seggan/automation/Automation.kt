@@ -1,13 +1,12 @@
 package io.github.seggan.automation
 
 import io.github.seggan.automation.commands.SuperCommand
-import io.github.seggan.automation.registries.Items
 import io.github.seggan.automation.computing.CpuTask
+import io.github.seggan.automation.registries.Items
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import java.net.URI
 import java.net.URL
-import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.properties.Delegates
 
@@ -52,7 +51,7 @@ class Automation : AbstractAddon() {
         dataFolder.toPath().resolve("local-repo").createDirectories()
 
         for (repo in config.getStringList("os.apm-repos")) {
-            apmRepos.add(URI(repo))
+            apmRepos += URI(repo)
         }
 
         URL("https://checkip.amazonaws.com/").openStream().bufferedReader().use {
