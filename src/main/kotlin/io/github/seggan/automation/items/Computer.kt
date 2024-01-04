@@ -43,6 +43,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.inventory.ItemStack
 import java.nio.file.Path
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.exists
 
@@ -149,11 +150,17 @@ class Computer(
             return
         }
 
+        val upgrades = EnumSet.noneOf(PeripheralUpgrade::class.java)
         for (component in COMPONENT_SLOTS) {
             val item = inv.getItemInSlot(component)
             val sfItem = getByItem(item)
             if (sfItem is Peripheral) {
                 Peripherals.addPeripheral(pos, sfItem.lib)
+            } else if (sfItem != null) {
+                val upgrade = PeripheralUpgrade.fromId(sfItem.id)
+                if (upgrade != null) {
+                    upgrades.add(upgrade)
+                }
             }
         }
 
@@ -187,7 +194,7 @@ class Computer(
         state.loadChunk(chunk)
         state.call(0)
 
-        val job = CpuJob(pos, state, 0, cpuSpeed)
+        val job = CpuJob(pos, state, upgrades, 0, cpuSpeed)
         CpuTask.jobs += job
         inv.replaceExistingItem(STATUS, STATUS_OK)
     }

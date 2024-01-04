@@ -1,21 +1,20 @@
 package io.github.seggan.automation.computing.peripherals
 
 import io.github.seggan.automation.computing.CpuTask
+import io.github.seggan.automation.items.PeripheralUpgrade
 import io.github.seggan.automation.pluginInstance
-import io.github.seggan.automation.util.WaitingFunction
-import io.github.seggan.automation.util.WaitingFunctionExecutor
-import io.github.seggan.automation.util.location
-import io.github.seggan.automation.util.text
+import io.github.seggan.automation.util.*
 import io.github.seggan.metis.runtime.*
 import io.github.seggan.metis.runtime.intrinsics.NativeLibrary
 import io.github.seggan.metis.util.pop
 import org.bukkit.Location
-import org.bukkit.attribute.Attribute
 import org.bukkit.block.data.Ageable
 import org.bukkit.block.data.Directional
 import org.bukkit.block.data.Powerable
 import org.bukkit.block.data.Waterlogged
-import org.bukkit.entity.*
+import org.bukkit.entity.Entity
+import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Marker
 import java.util.*
 
 class Sensor(private val range: Int) : NativeLibrary("sensor") {
@@ -131,65 +130,6 @@ class Sensor(private val range: Int) : NativeLibrary("sensor") {
         ) {
             return null
         }
-        return buildTable { table ->
-            table["x"] = entity.location.x.metisValue()
-            table["y"] = entity.location.y.metisValue()
-            table["z"] = entity.location.z.metisValue()
-
-            table["type"] = entity.type.name.lowercase().metisValue()
-            table["uuid"] = entity.uniqueId.toString().metisValue()
-
-            val customName = entity.customName()
-            if (customName != null) {
-                table["customName"] = customName.text.metisValue()
-            }
-
-            if (entity is LivingEntity) {
-                table["health"] = entity.health.metisValue()
-                table["maxHealth"] = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.value.metisValue()
-                table["arrowsInBody"] = entity.arrowsInBody.metisValue()
-                table["potionEffects"] = buildTable { effects ->
-                    entity.activePotionEffects.forEach { effect ->
-                        effects[effect.type.name.lowercase()] = effect.amplifier.metisValue()
-                    }
-                }
-                table["isLeashed"] = entity.isLeashed.metisValue()
-                table["isGlowing"] = entity.isGlowing.metisValue()
-                table["isSneaking"] = entity.isSneaking.metisValue()
-                table["isSwimming"] = entity.isSwimming.metisValue()
-                table["isSleeping"] = entity.isSleeping.metisValue()
-                table["isClimbing"] = entity.isClimbing.metisValue()
-                table["isGliding"] = entity.isGliding.metisValue()
-                table["isRiptiding"] = entity.isRiptiding.metisValue()
-                table["isOnFire"] = Value.Boolean.of(entity.fireTicks > 0)
-                table["isInWater"] = entity.isInWater.metisValue()
-                table["isInLava"] = entity.isInLava.metisValue()
-                table["isInBubbleColumn"] = entity.isInBubbleColumn.metisValue()
-                table["isInRain"] = entity.isInRain.metisValue()
-            }
-            if (entity is org.bukkit.entity.Ageable) {
-                table["isAdult"] = entity.isAdult.metisValue()
-                table["age"] = entity.age.metisValue()
-            }
-            if (entity is Tameable) {
-                table["isTamed"] = entity.isTamed.metisValue()
-                val owner = entity.owner
-                if (owner != null) {
-                    table["owner"] = owner.uniqueId.toString().metisValue()
-                }
-            }
-            if (entity is Breedable) {
-                table["canBreed"] = entity.canBreed().metisValue()
-            }
-            if (entity is Sittable) {
-                table["isSitting"] = entity.isSitting.metisValue()
-            }
-            if (entity is Player) {
-                table["name"] = entity.name.metisValue()
-                table["isOp"] = entity.isOp.metisValue()
-                table["isFlying"] = entity.isFlying.metisValue()
-                table["isSprinting"] = entity.isSprinting.metisValue()
-            }
-        }
+        return entity.metisProperties(PeripheralUpgrade.INVENTORY_SCANNER in CpuTask.getUpgrades(computerLocation.position))
     }
 }

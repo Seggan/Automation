@@ -1,6 +1,7 @@
 package io.github.seggan.automation.computing
 
 import io.github.seggan.automation.computing.peripherals.Peripherals
+import io.github.seggan.automation.items.PeripheralUpgrade
 import io.github.seggan.automation.pluginInstance
 import io.github.seggan.metis.runtime.MetisRuntimeException
 import io.github.seggan.metis.runtime.State
@@ -70,12 +71,21 @@ object CpuTask : Runnable {
     }
 
     fun getPositionOfState(state: State): BlockPosition {
-        state.parentState?.let { return getPositionOfState(it) }
         for (job in jobs) {
             if (job.state == state) {
                 return job.block
             }
         }
-        throw IllegalArgumentException("State is not running")
+        state.parentState?.let { return getPositionOfState(it) }
+        throw IllegalArgumentException("The given state is not associated with a block")
+    }
+
+    fun getUpgrades(block: BlockPosition): Set<PeripheralUpgrade> {
+        for (job in jobs) {
+            if (job.block == block) {
+                return job.upgrades
+            }
+        }
+        throw IllegalArgumentException("The given block is not associated with a state")
     }
 }

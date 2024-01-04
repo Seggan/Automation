@@ -23,6 +23,10 @@ object Peripherals : NativeLibrary("peripherals") {
         peripherals.remove(pos)
     }
 
+    fun removePeripheral(pos: BlockPosition, peripheral: String) {
+        peripherals[pos]?.remove(peripheral)
+    }
+
     override fun init(lib: MutableMap<String, Value>) {
         lib["get"] = oneArgFunction { name ->
             val pos = CpuTask.getPositionOfState(this)

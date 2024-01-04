@@ -1,3 +1,5 @@
+@file:JvmName("MetisCallables")
+
 package io.github.seggan.automation.util
 
 import io.github.seggan.metis.runtime.*
